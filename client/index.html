@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07151c">
+  <meta name="description" content="Laboratorio 3D multijugador de algoritmos Hill Climbing y recocido simulado.">
+  <title>Summit Lab · Arena de algoritmos</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 32 32" fill="none"><path d="M3 25 12 10l5.2 8 4.1-6.5L29 25" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="m9.8 13.6 2.3-3.6 2.3 3.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></span><span><strong>SUMMIT<span class="brand-contrast">LAB</span></strong><small>ARENA DE OPTIMIZACIÓN</small></span></div>
+    <div class="topbar-center"><span class="live-dot"></span><span id="phase-label">SALA DE ESPERA</span><span class="top-divider"></span><span id="round-label">RONDA 01</span></div>
+    <div class="topbar-right">
+      <div id="admin-controls" class="admin-controls" hidden>
+        <span class="admin-tag">ADMIN</span>
+        <button id="start-btn" class="btn btn-primary btn-sm" type="button"><span class="play-triangle">▶</span> Start</button>
+        <button id="reset-btn" class="btn btn-outline btn-sm" type="button">↺ Reset</button>
+      </div>
+      <div id="account-box" class="account-box" hidden><span id="account-avatar" class="avatar">U</span><span id="account-name">Usuario</span><button id="logout-btn" class="icon-btn" type="button" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</button></div>
+    </div>
+  </header>
+  <main class="workspace">
+    <aside class="left-panel panel">
+      <div class="panel-pad panel-heading"><span class="eyebrow">01 / TU ESTRATEGIA</span><h2>Elige tu algoritmo</h2><p>Selecciona cómo explorará tu agente el paisaje de optimización.</p></div>
+      <div id="algo-list" class="algo-list" aria-label="Algoritmos disponibles"></div>
+      <div class="selection-area panel-pad">
+        <div class="rule"></div>
+        <div class="config-title"><span>PARÁMETROS</span><span id="param-subtitle">CONFIGURACIÓN</span></div>
+        <div id="params-panel" class="params-panel"></div>
+        <button id="select-btn" type="button" class="btn btn-primary btn-wide">Confirmar estrategia <span>→</span></button>
+        <p id="selection-note" class="note">Puedes cambiar tu algoritmo antes de Start.</p>
+      </div>
+    </aside>
+    <section class="map-panel" aria-label="Mapa tridimensional">
+      <canvas id="terrain-canvas" aria-label="Terreno tridimensional interactivo"></canvas>
+      <div id="labels-layer" class="labels-layer" aria-hidden="true"></div>
+      <div class="map-top-left"><span class="map-kicker"><span class="kicker-square"></span> CAMPO DE BÚSQUEDA / 3D LIVE</span><h1>Encuentra la cima.</h1><p>Un terreno. Siete estrategias. La misma meta.</p></div>
+      <div class="map-top-right"><div class="summit-indicator"><span class="summit-diamond">◆</span><span><small>MÁXIMO GLOBAL APROX.</small><strong id="summit-height">—</strong></span></div></div>
+      <div class="map-controls"><button id="home-camera" type="button" title="Restablecer cámara" aria-label="Restablecer cámara">⌖</button><button id="spin-camera" type="button" title="Alternar rotación automática" aria-label="Alternar rotación automática">↻</button><button id="toggle-trails" type="button" title="Mostrar u ocultar recorridos" aria-label="Mostrar u ocultar recorridos">⌁</button></div>
+      <div class="map-bottom-left"><div class="legend"><span><i class="legend-dot legend-me"></i> Tu agente</span><span><i class="legend-dot legend-other"></i> Otros</span><span><i class="legend-dot legend-summit"></i> Cumbre</span></div><span class="map-help">ARRASTRAR PARA ORBITAR · RUEDA PARA ZOOM</span></div>
+      <div id="map-prompt" class="map-prompt"><span class="map-prompt-icon">◎</span><strong>La expedición está por comenzar</strong><span>Selecciona un algoritmo para aparecer en una posición aleatoria del mapa.</span></div>
+      <div id="my-hud" class="my-hud" hidden><div><small>TU ALTURA ACTUAL</small><strong id="hud-height">0.0</strong></div><div><small>TU RÉCORD</small><strong id="hud-best">0.0</strong></div><div><small>ITERACIONES</small><strong id="hud-steps">0</strong></div><div id="hud-temp-block" hidden><small>TEMPERATURA</small><strong id="hud-temp">0.00</strong></div></div>
+    </section>
+    <aside class="right-panel panel">
+      <div class="panel-pad panel-heading ranking-heading"><span class="eyebrow">02 / COMPETICIÓN</span><h2>Clasificación <span class="trophy">✦</span></h2><p>Ordenada por la mayor altura alcanzada durante la ronda.</p></div>
+      <div class="stat-strip"><div><strong id="users-count">00</strong><span>CONECTADOS</span></div><div><strong id="ready-count">00</strong><span>LISTOS</span></div><div><strong id="time-counter">00:00</strong><span>TIEMPO</span></div></div>
+      <div class="leaderboard-top"><span>RANKING EN VIVO</span><span>MEJOR ALTURA ↓</span></div>
+      <div id="leaderboard" class="leaderboard"><div class="empty-rank">Cuando comience la ronda, los participantes aparecerán aquí.</div></div>
+      <div class="right-footer"><span class="eyebrow">JUGADORES EN SALA</span><div id="room-players" class="room-players"></div><div class="system-note"><span class="live-dot"></span> Sincronización en tiempo real mediante eventos del servidor.</div></div>
+    </aside>
+  </main>
+</div>
+
+<div id="auth-screen" class="auth-screen" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="auth-eyebrow"><span class="mini-diamond">◇</span> SUMMIT LAB / ACCESO</div>
+    <div class="auth-visual" aria-hidden="true"><svg viewBox="0 0 380 116" preserveAspectRatio="xMidYMid meet" fill="none"><path d="m4 99 47-52 35 27 50-58 51 66 40-33 48 29 42-57 58 78" stroke="#55cdb8" stroke-width="2.2" stroke-linejoin="round"/><path d="m4 99 47-52 35 27 50-58 51 66 40-33 48 29 42-57 58 78v20H4Z" fill="url(#mountainGradient)" opacity=".3"/><path d="M136 16v-12M130 10h12" stroke="#eac882" stroke-width="1.5"/><circle cx="136" cy="16" r="4" fill="#eac882"/><path d="M0 110H380" stroke="#39616b" stroke-width="1"/><defs><linearGradient id="mountainGradient" x1="160" y1="10" x2="160" y2="118"><stop stop-color="#57d5bd"/><stop offset="1" stop-color="#57d5bd" stop-opacity="0"/></linearGradient></defs></svg></div>
+    <span class="eyebrow">EXPERIMENTO MULTIJUGADOR EN 3D</span>
+    <h2 id="auth-title">La cima te espera.</h2>
+    <p>Compite con otros exploradores para encontrar el punto más alto. Tu algoritmo decide el camino.</p>
+    <form id="login-form" autocomplete="on"><label for="login-name">NOMBRE DE USUARIO</label><input id="login-name" name="username" type="text" minlength="2" maxlength="24" placeholder="Escribe tu nombre" autocomplete="username" required autofocus><div id="password-field" hidden><label for="login-password">CONTRASEÑA DE ADMINISTRADOR</label><input id="login-password" name="password" type="password" placeholder="Contraseña" autocomplete="current-password"></div><button type="submit" class="btn btn-primary btn-wide">Entrar al laboratorio <span>↗</span></button></form>
+    <div id="login-error" class="auth-error" role="alert" hidden></div>
+    <div class="auth-foot"><span><i></i> SESIÓN EN VIVO</span><span>NODE.JS + WEBGL</span></div>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

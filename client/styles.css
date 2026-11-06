@@ -10,3 +10,203 @@
 @media(max-width:680px){.app-shell{height:auto;min-height:100dvh;overflow:auto}.topbar{height:auto;min-height:65px;flex:0 0 auto;padding:10px 12px;flex-wrap:wrap}.brand{min-width:0}.brand strong{font-size:16px}.brand-symbol{width:35px;height:35px}.brand small{font-size:8px}.topbar-center{order:3;width:100%;justify-content:center;padding-top:3px}.topbar-right{min-width:0}.admin-controls{gap:4px}.admin-tag{display:none}.btn-sm{padding:8px;font-size:10px}.account-box #account-name{display:none}.workspace{display:flex;flex-direction:column}.map-panel{height:58vh;min-height:380px;order:1}.left-panel{order:2;overflow:visible;border-right:0;border-top:1px solid var(--line)}.right-panel{display:flex;order:3;overflow:visible;border-left:0;border-top:1px solid var(--line)}.panel-heading{padding:19px 17px 14px}.algo-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0 12px}.algo-card{padding:10px;gap:7px}.algo-number{height:24px;width:24px;flex-basis:24px}.algo-info strong{font-size:10px}.algo-info small{font-size:9px}.algo-info em{font-size:7px}.selection-area{padding:18px}.map-top-left{top:22px;left:18px}.map-top-left h1{font-size:26px}.map-top-left p{font-size:10px}.map-kicker{font-size:8px}.map-top-right{top:84px;right:12px}.summit-indicator{padding:7px 9px}.summit-indicator small{font-size:7px}.summit-indicator strong{font-size:13px}.summit-diamond{font-size:18px}.map-controls{right:10px;top:56%}.map-controls button{width:30px;height:30px;font-size:15px}.map-bottom-left{bottom:100px;left:14px}.my-hud{bottom:9px;left:9px;right:9px;justify-content:space-between}.my-hud small{font-size:7px}.my-hud strong{font-size:16px}.my-hud>div{min-width:0}.map-help{display:none}.map-prompt{width:240px;padding:16px}.auth-card{padding:22px}.auth-card h2{font-size:26px}.auth-visual{height:95px}.right-footer{padding-bottom:35px}}
 @media(max-width:390px){.algo-list{grid-template-columns:1fr}.map-top-left h1{font-size:23px}.map-top-left p{max-width:200px}.topbar-center{letter-spacing:1px}.my-hud{gap:5px;padding:9px 7px}.my-hud>div+div{padding-left:6px}}
 .param-select{width:100%;background:#142b33;border:1px solid #37575c;border-radius:5px;color:#e0f0ec;padding:8px;font-size:11px;outline:none}.param-select:focus{border-color:var(--mint)}
+
+/* =====================================================================
+   SUMMIT LAB · EDICIÓN CLARA
+   Superficies luminosas y mayor espacio útil para la escena 3D.
+   ===================================================================== */
+:root {
+  color-scheme: light;
+  --bg: #eef4f5;
+  --panel: #ffffff;
+  --panel2: #f4f9f9;
+  --line: #d9e6e6;
+  --line2: #c8dddd;
+  --text: #193740;
+  --muted: #617b84;
+  --faint: #8199a0;
+  --mint: #148c7c;
+  --mint-2: #117767;
+  --gold: #ba8545;
+}
+html,body { background: var(--bg);color:var(--text) }
+::selection { background:#b9e7d5 }
+::-webkit-scrollbar-thumb { background:#bdd4d4 }
+.topbar {
+  height:68px;flex-basis:68px;
+  background:#fff;
+  border-bottom-color:#dce7e7;
+  box-shadow:0 3px 22px #234d5210;
+}
+.brand-symbol {
+  background:linear-gradient(135deg,#e7f6ee,#daf1f0);
+  border-color:#bce1d8;color:#178677;box-shadow:none;
+}
+.brand-contrast {color:#138978}
+.brand small {color:#6e9596}
+.topbar-center {color:#51777e}
+.live-dot {background:#22a68d;box-shadow:0 0 0 3px #dff6eb}
+.account-box {color:#3a5960}
+.avatar {background:#e1f3ea;border-color:#c1e4d6;color:#147d69}
+.icon-btn {color:#718c8e}
+.icon-btn:hover {color:#0c7368}
+.admin-tag {border-color:#e9d6b8;background:#fff6e7;color:#986724}
+.btn-primary {background:#138d7a;border-color:#138d7a;color:#fff;box-shadow:0 3px 11px #138d7a27}
+.btn-primary:hover:not(:disabled) {background:#087b69}
+.btn-outline {background:#fff;border-color:#bfd4d5;color:#375b63}
+.btn-outline:hover:not(:disabled) {background:#f1f8f8}
+/* Más ancho para la vista central, sin eliminar los dos paneles funcionales. */
+.workspace {grid-template-columns:258px minmax(0,1fr) 238px}
+.panel {background:#fff}
+.panel-heading p {color:#70858c}
+.eyebrow {color:#198e7b}
+.panel-heading h2 {color:#1b3b42}
+.algo-list {padding:0 10px;gap:7px}
+.algo-card {
+  background:#f7faf9;border-color:#e1eceb;
+  border-radius:10px;padding:11px 9px 11px 11px;
+}
+.algo-card:hover {background:#f0f8f5;border-color:#9dcebb}
+.algo-card.active {
+  background:linear-gradient(120deg,#e5f7ee,#effaf6);
+  border-color:#58b99b;box-shadow:inset 3px 0 0 #128b79;
+}
+.algo-number {background:#eaf1f2;border-color:#d3e3e4;color:#738e93}
+.algo-card.active .algo-number {background:#c9ebdf;color:#106d5d;border-color:#9cd4bf}
+.algo-info small {color:#70858b}
+.algo-info em {color:#168777}
+.algo-card:last-child .algo-info em {color:#a47335}
+.rule {background:#e0ebeb}
+.config-title {color:#2b4c53}
+.config-title span:last-child {color:#7c989b}
+.parameter-top {color:#607b82}
+.parameter-top strong {color:#20494b}
+.parameter input[type=range] {background:#cfe3e0}
+.parameter input[type=range]::-webkit-slider-thumb {background:#148c7c;border-color:#e3f4ed;box-shadow:0 0 0 1px #148c7c}
+.parameter input[type=range]::-moz-range-thumb {background:#148c7c;border-color:#e3f4ed}
+.parameter-help,.note {color:#769096}
+.note.note-ready {color:#177b67}
+.param-select {background:#f7fbfa;border-color:#c8dddd;color:#25454c}
+.param-select:focus {border-color:#148c7c}
+/* Paisaje sobre fondo de cielo de estudio, evitando el negro original. */
+.map-panel {
+  background:
+    radial-gradient(ellipse at 53% 64%,#e9f7f0 0%,#eaf7f7 39%,transparent 72%),
+    linear-gradient(168deg,#f6fbfc 0%,#ecf7f7 51%,#e3f0f0 100%);
+}
+.map-panel:before {
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(#aacdcc 0.75px,transparent 0.75px);
+  background-size:24px 24px;
+  opacity:.23;
+}
+.agent-label {
+  background:#ffffffed;border-color:#bbd9d4;
+  box-shadow:0 5px 16px #225a5629;color:#20464c;
+}
+.agent-label:after {background:#fff;border-color:#bbd9d4}
+.agent-label.mine {background:#e7f9ed;border-color:#71be9f;color:#166c57}
+.agent-label small {color:#678d8b}
+.landmark-label {color:#a66f2d;text-shadow:0 1px 0 #fff,0 2px 8px #ffffffdd}
+.map-top-left {text-shadow:none}
+.map-kicker {color:#367e78}
+.kicker-square {border-color:#1a9b84}
+.map-top-left h1 {color:#1e4247}
+.map-top-left p {color:#63848a}
+.summit-indicator {
+  background:#ffffffdc;border:1px solid #d5e6e2;
+  box-shadow:0 5px 20px #254c4b14;
+}
+.summit-diamond {color:#c18d4a}
+.summit-indicator small {color:#6e8589}
+.summit-indicator strong {color:#946024}
+.map-controls button {
+  color:#486c71;background:#ffffffdc;border-color:#cce1dd;
+  box-shadow:0 3px 12px #235a5914;
+}
+.map-controls button:hover,.map-controls button.active {border-color:#61b99e;color:#0c8673;background:#eaf9f2}
+.legend>span {color:#5b7a7e}
+.legend-me {background:#138674;box-shadow:0 0 0 3px #d9eee3}
+.legend-other {background:#587dcc;box-shadow:0 0 0 3px #dbe4f9}
+.legend-summit {background:#c18e4e;box-shadow:0 0 0 3px #f4ead6}
+.map-help {color:#7b999a}
+.map-prompt {
+  background:#ffffffed;border-color:#beded5;
+  box-shadow:0 17px 55px #2a6a5a20;
+}
+.map-prompt-icon {color:#15937d}
+.map-prompt strong {color:#23474c}
+.map-prompt span:last-child {color:#6a8589}
+.my-hud {
+  background:#ffffffed;border-color:#d3e4e2;
+  box-shadow:0 5px 22px #2f62601b;
+}
+.my-hud>div+div {border-color:#d7e4e3}
+.my-hud small {color:#6b8b8f}
+.my-hud strong {color:#20454a}
+.stat-strip {background:#f3f8f8;border-color:#e3eeee}
+.stat-strip>div+div {border-color:#d8e5e6}
+.stat-strip strong {color:#285158}
+.stat-strip span {color:#77949a}
+.leaderboard-top {color:#638188}
+.leaderboard-top span:last-child {color:#8da2a6}
+.rank-item {background:#f5f9fa;border:1px solid #edf2f2}
+.rank-item.is-me {background:#eaf7f0;border-color:#a6ddc8}
+.rank-number {color:#69848b}
+.rank-item:nth-child(1) .rank-number {color:#b37e30}
+.rank-item:nth-child(2) .rank-number {color:#728ea0}
+.rank-item:nth-child(3) .rank-number {color:#b48163}
+.rank-avatar {border-color:#c0d9da}
+.rank-main small {color:#758e93}
+.rank-score strong {color:#147f6b}
+.rank-score small {color:#7e999d}
+.empty-rank {color:#728e95;border-color:#d4e3e3}
+.right-footer>.eyebrow {color:#64878a}
+.room-player {color:#4d6b72}
+.room-player-name i {background:#b5cacc}
+.room-player small {color:#7a9399}
+.system-note {border-color:#d9e7e7;color:#6e8b90}
+.auth-screen {background:#e9f3f2de;backdrop-filter:blur(9px)}
+.auth-glow {background:radial-gradient(ellipse,#c2f1df 0%,transparent 72%);filter:blur(48px)}
+.auth-card {
+  background:#fff;border-color:#cde4df;
+  box-shadow:0 30px 95px #2b5f5930,inset 0 1px 0 #fff;
+}
+.auth-eyebrow {color:#2a877b}
+.mini-diamond {color:#15927f}
+.auth-card .eyebrow {color:#198874}
+.auth-card h2 {color:#1a4045}
+.auth-card>p {color:#66848c}
+.auth-card label {color:#3b646a}
+.auth-card input {background:#f6faf9;border-color:#d5e5e3;color:#20454c}
+.auth-card input:focus {border-color:#22a588;box-shadow:0 0 0 3px #23a58b1f}
+.auth-card input::placeholder {color:#94a8aa}
+.auth-error {color:#ae343f}
+.auth-foot {border-color:#d6e5e2;color:#719392}
+.auth-foot i {background:#1a9b80}
+.toast {background:#e4f8ed;border-color:#85c9af;box-shadow:0 7px 30px #244e492a;color:#175c4c}
+.toast.error {background:#fff0ef;border-color:#edb4b3;color:#9b3d3f}
+/* El mapa gana ancho también en portátiles. */
+@media (max-width:1260px) {
+  .workspace {grid-template-columns:235px minmax(0,1fr) 223px}
+  .panel-pad {padding-left:15px;padding-right:15px}
+  .algo-list {padding:0 8px}
+}
+@media (max-width:1050px) {
+  .workspace {grid-template-columns:245px minmax(0,1fr)}
+  .right-panel {display:none}
+}
+@media (max-width:680px) {
+  .app-shell {height:auto;min-height:100dvh;overflow:auto}
+  .workspace {display:flex;flex-direction:column}
+  .map-panel {height:66vh;min-height:450px;order:1}
+  .left-panel {order:2}
+  .right-panel {display:flex;order:3}
+  .map-top-left {top:19px;left:15px}
+  .map-top-left h1 {font-size:25px}
+  .map-top-right {top:81px;right:10px}
+  .map-bottom-left {bottom:100px;left:12px}
+  .map-controls {right:10px;top:56%}
+  .my-hud {bottom:9px;left:9px;right:9px}
+  .algo-list {padding:0 12px}
+}

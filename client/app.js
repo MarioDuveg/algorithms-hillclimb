@@ -79,7 +79,7 @@ function renderParameters() {
   if (selectedAlgorithm === 'sideways') options.push('sidewaysLimit');
   if (selectedAlgorithm === 'annealing') options.push('startTemp', 'coolingRate', 'minTemp', 'stepsPerTemp', 'maxSteps');
   $('#param-subtitle').textContent = `${options.length} CONTROLES`;
-  panel.innerHTML = `<p class="note" style="margin:0 0 17px;color:#a3c2c1">${escapeHTML(algo.description)}</p>` + options.map((key) => {
+  panel.innerHTML = `<p class="note" style="margin:0 0 17px;color:var(--muted)">${escapeHTML(algo.description)}</p>` + options.map((key) => {
     const d = PARAMS[key]; const val = params[key];
     if (d.options) return `<div class="parameter"><div class="parameter-top"><span>${escapeHTML(d.label)}</span><strong data-value="${key}">${val}</strong></div><select class="param-select" data-param="${key}" aria-label="${escapeHTML(d.label)}">${d.options.map((op) => `<option value="${op}" ${op === val ? 'selected' : ''}>${op} direcciones</option>`).join('')}</select>${d.help ? `<div class="parameter-help">${escapeHTML(d.help)}</div>` : ''}</div>`;
     return `<div class="parameter"><div class="parameter-top"><span>${escapeHTML(d.label)}</span><strong data-value="${key}">${Number(val).toFixed(d.digits)}</strong></div><input type="range" data-param="${key}" min="${d.min}" max="${d.max}" step="${d.step}" value="${val}" aria-label="${escapeHTML(d.label)}">${d.help ? `<div class="parameter-help">${escapeHTML(d.help)}</div>` : ''}</div>`;

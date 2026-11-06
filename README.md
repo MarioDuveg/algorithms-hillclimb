@@ -7,10 +7,10 @@
 - Registro mediante nombre de usuario (2–24 caracteres), con control de nombres duplicados.
 - Usuario reservado **`admin`** con contraseña inicial de demostración **`Admin2026`**. En Render se recomienda establecer `ADMIN_PASSWORD` como variable de entorno.
 - Todos los exploradores ven el **mismo relieve tridimensional**, los agentes, sus recorridos y el ranking en tiempo real.
-- Mapa matemático multicolina con una **cumbre global dominante (~41.8 m)**, máximos locales y **ocho cuencas de mínimo global a altura 0**.
+- Mapa matemático multicolina con una **cumbre global dominante (~41.8 m)**, máximos locales y **ocho mínimos globales puntuales a altura 0, sin explanadas artificiales**.
 - Posición inicial aleatoria cuando se confirma un algoritmo (antes de pulsar Start).
 - El ranking se ordena por la **máxima altura alcanzada históricamente** por cada jugador, no por su altura actual (importante para reinicios aleatorios y recocido).
-- Animación de agentes y trazas de trayectoria, cámara orbital (arrastrar), zoom con rueda, autorrotación, marcadores de la cumbre y de los mínimos.
+- Animación de agentes y trazas de trayectoria, cámara orbital (arrastrar), zoom con rueda, autorrotación, marcador de la cumbre (sin puntos sobre los mínimos).
 - El administrador tiene los mismos controles de algoritmo que los demás y, adicionalmente, **Start** y **Reset**.
 - **Start:** inicia simultáneamente a todos los participantes conectados que hayan confirmado un algoritmo. Usuarios sin elección son espectadores hasta la siguiente ronda.
 - **Reset:** limpia estrategias, posiciones, puntuaciones, rutas y ranking de **todos**; mantiene las sesiones abiertas para que vuelvan a elegir estrategia sin escribir el nombre otra vez.
@@ -28,7 +28,7 @@
 | Movimientos laterales | Mejor vecino ascendente; si no hay, permite movimientos casi horizontales con tolerancia de altura 0.06. | Paso, vecinos, límite lateral |
 | Recocido simulado | Acepta ascensos y descensos con probabilidad `exp((h_nueva - h_actual)/T)`. | Paso, vecinos, temperatura inicial, factor de enfriamiento, temperatura mínima, pasos por temperatura, iteraciones máximas |
 
-> Nota matemática: la altura se limita inferiormente a 0, lo que crea **múltiples cuencas de mínimos globales**. El máximo global mostrado en la interfaz es una aproximación numérica sobre una malla de 0.2 unidades; el terreno se evalúa de forma continua durante los movimientos. El objetivo es **maximizar** la altura. `Movimientos laterales` usa una tolerancia práctica para mesetas continuas.
+> Nota matemática: la altura se mantiene no negativa mediante depresiones gaussianas suaves que tocan exactamente 0 en ocho puntos. Así se conservan **ocho mínimos globales** sin que aparezcan las planicies artificiales que producía el recorte `Math.max(0, altura)`. El máximo global mostrado en la interfaz es una aproximación numérica sobre una malla de 0.2 unidades; el terreno se evalúa de forma continua durante los movimientos. El objetivo es **maximizar** la altura. `Movimientos laterales` usa una tolerancia práctica para mesetas continuas.
 
 ## Ejecución local
 
@@ -124,3 +124,7 @@ Las sesiones usan cookie HTTP-only. El navegador no puede manipular la puntuaci�
 - Se trata de una demostración educativa, no de un sistema de autenticación empresarial o antitrampas avanzado.
 
 **Licencia:** ejemplo de uso educativo; puede modificarse para prácticas y demostraciones.
+
+## Actualización visual — tema claro
+
+La interfaz utiliza un tema claro con colores de salvia y jade. El visor 3D dispone de más espacio horizontal gracias a paneles laterales compactos y la cámara inicial está **1.5× más cerca** que en la versión original (distancia `104/1.5`). Se han eliminado los marcadores celestes de los mínimos y las plataformas planas en torno a ellos, manteniendo ocho mínimos globales suaves en el modelo matemático.

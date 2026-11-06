@@ -8,7 +8,13 @@ test('Relieve: existe una cumbre prominente y ocho mínimos globales de altura c
   const landmarks = findLandmarks();
   assert.ok(landmarks.summit.h > 35);
   assert.equal(landmarks.minima.length, 8);
-  landmarks.minima.forEach(({ x, z, h }) => { assert.equal(heightAt(x, z), 0);assert.equal(h, 0); });
+  landmarks.minima.forEach(({ x, z, h }) => {
+    assert.equal(heightAt(x, z), 0);
+    assert.equal(h, 0);
+    // El valle es puntualmente mínimo, no una planicie horizontal recortada a 0.
+    assert.ok(heightAt(x + 0.3, z) > 0);
+    assert.ok(heightAt(x, z + 0.3) > 0);
+  });
   assert.equal(withinBounds(31, 0), false);
 });
 

@@ -23,14 +23,20 @@ function gaussian(x, z, cx, cz, amplitude, sigma) {
   return amplitude * Math.exp(-(dx * dx + dz * dz) / (2 * sigma * sigma));
 }
 
-/** Altura real para puntuar. Múltiples valles tienen mínimo global 0. */
+/** Altura real para puntuar. Ocho mínimos puntuales tienen altura 0, sin planicies. */
 export function heightAt(x, z) {
   let height = 4.2
     + 1.15 * Math.sin(x * 0.41 + z * 0.1) * Math.cos(z * 0.35)
     + 0.75 * Math.sin(x * 0.67 - z * 0.31);
   for (const [cx, cz, a, s] of hills) height += gaussian(x, z, cx, cz, a, s);
-  for (const [cx, cz] of VALLEYS) height -= gaussian(x, z, cx, cz, 11.5, 3.1);
-  return Math.max(0, height);
+  // Cada mínimo se obtiene como una depresión suave que solo toca 0 en
+  // su centro. Evitamos Math.max(0, altura): ese recorte generaba
+  // explanadas artificiales en el fondo de los valles.
+  for (const [cx, cz] of VALLEYS) {
+    const r2 = (x - cx) ** 2 + (z - cz) ** 2;
+    height *= 1 - Math.exp(-r2 / (2 * 2.65 ** 2));
+  }
+  return height;
 }
 
 export function withinBounds(x, z) {

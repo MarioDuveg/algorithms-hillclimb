@@ -10,13 +10,13 @@ void main(){
   gl_Position = uViewProjection * vec4(aPosition, 1.0);
   vDistance = -view.z;
   float light = max(dot(normalize(aNormal), normalize(vec3(0.44,0.94,0.27))), 0.0);
-  vColor = aColor * (0.50 + 0.60 * light);
+  vColor = aColor * (0.72 + 0.36 * light);
 }`;
 const FS_TERRAIN = `
 precision mediump float; varying vec3 vColor; varying float vDistance;
 void main(){
-  float fog = smoothstep(75.0,170.0,vDistance) * 0.68;
-  gl_FragColor = vec4(mix(vColor, vec3(0.065,0.15,0.18),fog),1.0);
+  float fog = smoothstep(88.0,180.0,vDistance) * 0.24;
+  gl_FragColor = vec4(mix(vColor, vec3(0.91,0.96,0.96),fog),1.0);
 }`;
 const VS_LINES = `attribute vec3 aPosition; uniform mat4 uViewProjection;
 void main(){gl_Position=uViewProjection * vec4(aPosition,1.0);}`;
@@ -93,14 +93,15 @@ function hexRGB(hex) {
   return [parseInt(t.slice(0,2),16)/255,parseInt(t.slice(2,4),16)/255,parseInt(t.slice(4,6),16)/255];
 }
 function mix(a,b,t){return a.map((v,i)=>v+(b[i]-v)*t);}
+// Colores del relieve, en sintonía con el tema claro: jade, salvia y arena.
 const PALETTE = [
-  [0, [0.045,0.28,0.34]],
-  [4, [0.07,0.42,0.41]],
-  [11, [0.10,0.63,0.51]],
-  [19, [0.26,0.71,0.56]],
-  [28, [0.66,0.78,0.62]],
-  [39, [0.95,0.82,0.58]],
-  [47, [1.0,0.94,0.77]],
+  [0,  [0.31,0.69,0.67]],
+  [4,  [0.37,0.76,0.68]],
+  [11, [0.41,0.76,0.57]],
+  [19, [0.66,0.80,0.56]],
+  [28, [0.91,0.83,0.60]],
+  [39, [0.97,0.88,0.70]],
+  [47, [1.00,0.95,0.84]],
 ];
 function heightColor(h) {
   for(let i=1;i<PALETTE.length;i++) if(h<=PALETTE[i][0]) {
@@ -141,9 +142,9 @@ function createGrid() {
   return new Float32Array(points);
 }
 
-export const AGENT_COLORS = ['#89aaff','#f1b376','#bc9dff','#79d3e5','#f29ba1','#cae693','#9de9d1','#eab3da'];
+export const AGENT_COLORS = ['#5578cc','#e28d52','#895dc1','#2e9ca8','#d66b81','#829733','#2f957d','#a45e89'];
 export function agentColor(player, meId) {
-  if(player.id===meId) return '#7ff8cc';
+  if(player.id===meId) return '#0b786b';
   const hash=[...player.id].reduce((v,c)=>((v*31+c.charCodeAt(0))>>>0),7);
   return AGENT_COLORS[hash%AGENT_COLORS.length];
 }
@@ -154,7 +155,9 @@ export class Terrain3D {
     this.gl=canvas.getContext('webgl',{antialias:true,alpha:true,preserveDrawingBuffer:false});
     this.players=[]; this.meId=null; this.positions=new Map(); this.labelNodes=new Map();
     this.spin=false;this.trails=true;
-    this.theta=-0.64;this.phi=1.09;this.distance=104;
+    // Zoom inicial 1.5× respecto a la cámara original de distancia 104.
+    this.homeDistance=104/1.5;
+    this.theta=-0.64;this.phi=1.09;this.distance=this.homeDistance;
     this.targetTheta=this.theta;this.targetPhi=this.phi;this.targetDistance=this.distance;
     this.isDragging=false;
     this.landmarks=findLandmarks();
@@ -185,10 +188,10 @@ export class Terrain3D {
     this.grid=createGrid();this.gridBuf=buffer(gl,gl.ARRAY_BUFFER,this.grid);
     this.dynamicBuf=gl.createBuffer();
     this.markerBuf=gl.createBuffer();
-    const {summit,minima}=this.landmarks;
+    const {summit}=this.landmarks;
     this.landmarkVertices=new Float32Array([
-      ...minima.flatMap(({x,z})=>[x,1.1,z,.27,.88,.91,7.0]),
-      summit.x,(summit.h*VERTICAL_SCALE)+5,summit.z,1,.82,.44,16,
+      // Sin puntos en los valles. El único marcador geográfico es la cima.
+      summit.x,(summit.h*VERTICAL_SCALE)+5,summit.z,.85,.54,.20,16,
     ]);
     this.landmarkBuf=buffer(gl,gl.ARRAY_BUFFER,this.landmarkVertices);
     gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
@@ -206,11 +209,11 @@ export class Terrain3D {
       this.lastX=e.clientX;this.lastY=e.clientY;
     });
     this.canvas.addEventListener('wheel',(e)=>{
-      e.preventDefault();this.targetDistance=Math.max(48,Math.min(178,this.targetDistance*Math.exp(e.deltaY*.001)));
+      e.preventDefault();this.targetDistance=Math.max(35,Math.min(178,this.targetDistance*Math.exp(e.deltaY*.001)));
     },{passive:false});
     this.canvas.addEventListener('dblclick',()=>this.home());
   }
-  home(){this.targetTheta=-.64;this.targetPhi=1.09;this.targetDistance=104;}
+  home(){this.targetTheta=-.64;this.targetPhi=1.09;this.targetDistance=this.homeDistance;}
   setPlayers(players,meId){
     this.players=players;this.meId=meId;
     const current=new Set(players.filter((p)=>p.x!==null).map((p)=>p.id));
@@ -284,7 +287,7 @@ export class Terrain3D {
       const slopeX=(h2+h3-h1-h4)/(2*stride)*VERTICAL_SCALE;
       const slopeZ=(h3+h4-h1-h2)/(2*stride)*VERTICAL_SCALE;
       const light=Math.max(.05,dot(normalize([-slopeX,1,-slopeZ]),normalize([.44,.94,.27])));
-      const color=heightColor(average).map(v=>Math.min(1,v*(.51+.59*light)));
+      const color=heightColor(average).map(v=>Math.min(1,v*(.72+.36*light)));
       cells.push({x,z,average,vertices:[[x,h1*VERTICAL_SCALE,z],[x+stride,h2*VERTICAL_SCALE,z],[x+stride,h3*VERTICAL_SCALE,z+stride],[x,h4*VERTICAL_SCALE,z+stride]],color:`rgb(${color.map(v=>Math.round(v*255)).join(',')})`});
     }
     return cells;
@@ -318,18 +321,13 @@ export class Terrain3D {
       ctx.beginPath();ctx.moveTo(corners[0].x,corners[0].y);
       for(let i=1;i<corners.length;i++)ctx.lineTo(corners[i].x,corners[i].y);
       ctx.closePath();ctx.fillStyle=cell.color;ctx.fill();
-      ctx.strokeStyle='rgba(5,26,31,.09)';ctx.lineWidth=.5;ctx.stroke();
+      ctx.strokeStyle='rgba(21,76,75,.075)';ctx.lineWidth=.5;ctx.stroke();
     }
     const summit=this.landmarks.summit;
     const low=project(summit.x,summit.h*VERTICAL_SCALE+.3,summit.z),high=project(summit.x,summit.h*VERTICAL_SCALE+7,summit.z);
     if(low&&high){
-      ctx.strokeStyle='#f4d18e';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(low.x,low.y);ctx.lineTo(high.x,high.y);ctx.stroke();
-      ctx.fillStyle='#f5d18d';ctx.beginPath();ctx.arc(high.x,high.y,4.5,0,Math.PI*2);ctx.fill();
-    }
-    for(const point of this.landmarks.minima){
-      const pt=project(point.x,1.15,point.z);
-      if(!pt)continue;
-      ctx.fillStyle='#63ccd5';ctx.beginPath();ctx.arc(pt.x,pt.y,3,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#be8844';ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(low.x,low.y);ctx.lineTo(high.x,high.y);ctx.stroke();
+      ctx.fillStyle='#c08c49';ctx.beginPath();ctx.arc(high.x,high.y,4.5,0,Math.PI*2);ctx.fill();
     }
     for(const p of this.players){
       if(p.x===null)continue;
@@ -351,7 +349,7 @@ export class Terrain3D {
       if(pt){
         ctx.shadowColor=c;ctx.shadowBlur=14;
         ctx.fillStyle=c;ctx.beginPath();ctx.arc(pt.x,pt.y,p.id===this.meId?8:6,0,Math.PI*2);ctx.fill();
-        ctx.shadowBlur=0;ctx.strokeStyle='#eafff2';ctx.lineWidth=1.5;ctx.stroke();
+        ctx.shadowBlur=0;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.5;ctx.stroke();
       }
       const label=this.labelNodes.get(p.id);
       if(label){label.style.display=labelPt?'block':'none';if(labelPt){label.style.left=`${labelPt.x}px`;label.style.top=`${labelPt.y}px`;}}
@@ -383,9 +381,9 @@ export class Terrain3D {
     gl.drawElements(gl.TRIANGLES,this.mesh.count,gl.UNSIGNED_SHORT,0);
 
     gl.enable(gl.BLEND);
-    this.drawLines(this.grid,gl.LINES,[.12,.38,.40,.34],vp);
+    this.drawLines(this.grid,gl.LINES,[.55,.73,.72,.23],vp);
     const summit=this.landmarks.summit;
-    this.drawLines(new Float32Array([summit.x,summit.h*VERTICAL_SCALE+.5,summit.z,summit.x,summit.h*VERTICAL_SCALE+5,summit.z]),gl.LINES,[.97,.78,.43,.9],vp);
+    this.drawLines(new Float32Array([summit.x,summit.h*VERTICAL_SCALE+.5,summit.z,summit.x,summit.h*VERTICAL_SCALE+5,summit.z]),gl.LINES,[.75,.49,.22,.95],vp);
     if(this.trails)for(const p of this.players){
       if(!p.path||p.path.length<2)continue;
       const c=hexRGB(agentColor(p,this.meId));
